@@ -11,12 +11,21 @@ import EditTranslation from './edit_translation.jsx';
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {selectedSentence: null, article: null};
+		this.state = {
+			selectedSentence: null,
+			article: {translated: null, original: null},
+		};
 		this.handleSelect = this.handleSelect.bind(this);
+		this.submitTranslation = this.submitTranslation.bind(this);
+
 		this.articleService = new ArticleService();
-		this.articleService.getOriginal(1).then(article => {
+		Promise.all([
+				this.articleService.getOriginal(props.id),
+				this.articleService.getTranslated(props.id),
+		]).then(values => {
+			const [original, translated] = values;
 			this.setState(prevState => ({
-				article: article,
+				article: {original: original, translated: translated},
 			}));
 		});
 	}
@@ -26,11 +35,20 @@ export default class App extends React.Component {
 		}));
 	}
 
-	originalSentence() {
-		if (!this.state.article) {
-			return null;
+	selectedSentenceText(type) {
+		const validTypes = ["original", "translated"];
+		if (!validTypes.includes(type) || this.state.article[type] == null) {
+			return null
 		}
-		return this.state.article.sentences[this.state.selectedSentence];
+		if (this.state.selectedSentence == 0) {
+			return this.state.article[type].title;
+		} else {
+			return this.state.article[type].sentences[this.state.selectedSentence-1];
+		}
+	}
+
+	submitTranslation(translation) {
+		return this.articleService.submitTranslation(this.props.id, this.state.selectedSentence, translation);
 	}
 
   render() {
@@ -58,8 +76,11 @@ export default class App extends React.Component {
 						article={this.state.article} />
 					</Col>
 					<Col md={4}>
-						<EditTranslation selected={this.state.selectedSentence!=null}
-						original={this.originalSentence()}
+						<EditTranslation
+						selectedSentence={this.state.selectedSentence}
+						original={this.selectedSentenceText("original")}
+						translated={this.selectedSentenceText("translated")}
+						submitTranslation={this.submitTranslation}
 						/>
 					</Col>
 				</Row>
