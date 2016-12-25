@@ -24,7 +24,10 @@ class Sentence extends React.Component {
 
 class Article extends React.Component {
 	render() {
-		let sentences = this.props.sentences
+		if (this.props.article == null) {
+			return <div></div>
+		}
+		let sentences = this.props.article.sentences
 			.map((s,index) => <Sentence
 					id={index}
 					key={index}
@@ -41,6 +44,10 @@ class Article extends React.Component {
 }
 
 class EditTranslation extends React.Component {
+	constructor(props) {
+		super(props);
+		this.articleService = new ArticleService();
+	}
 	render() {
 		return (
 				<div className={!this.props.selected?"hidden":""}>
@@ -48,32 +55,60 @@ class EditTranslation extends React.Component {
 					<FormGroup>
 						<FormControl componentClass="textarea" placeholder="Translation" />
 					</FormGroup>
+					<Button bsStyle="primary">Submit</Button>
 				</div>
 		)
+	}
+}
+
+class ArticleService {
+	getOriginal(id) {
+		//return fetch(`/article/${id}/original`)
+		return new Promise(function(resolve, reject){
+			const article = {
+				title: "Firma esta petición: La culpa del machismo de Maluma es mía",
+				sentences: [
+					"Está últimamente la tropa moral en plan comando.",
+					"Esto está bien, esto está mal, esto hay que prohibir y esto hay que cantar.",
+					"Y uno, que nunca ha sido amigo de la censura, no acaba de entender qué problema ven ahora en la (pésima) canción de un tal Maluma que rapea (o eso se intuye) una canción titulada Cuatro babys.",
+					"La letra del tema es infame, vale, en eso estamos de acuerdo.",
+					"Es grosera, infantil, 'falocéntrica' y cosifica a la mujer.",
+					"Todo ello es de un gusto pésimo y de una mala educación terrible...",
+					"¡Hey!",
+					"Aquí quería llegar... de una educación terrible.",
+				]
+			};
+			resolve(article);
+		});
 	}
 }
 
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {selectedSentence: null};
+		this.state = {selectedSentence: null, article: null};
 		this.handleSelect = this.handleSelect.bind(this);
+		this.articleService = new ArticleService();
+		this.articleService.getOriginal(1).then(article => {
+			this.setState(prevState => ({
+				article: article,
+			}));
+		});
 	}
 	handleSelect(sentence) {
 		this.setState(prevState => ({
 			selectedSentence: sentence.props.id,
 		}));
 	}
+
+	originalSentence() {
+		if (!this.state.article) {
+			return null;
+		}
+		return this.state.article.sentences[this.state.selectedSentence];
+	}
+
   render() {
-		const article = {
-			title: "Thinking in React",
-			sentences: [
-				"Now that we've identified the components in our mock, let's arrange them into a hierarchy.",
-				"Now that we've identified the components in our mock, let's arrange them into a hierarchy.",
-				"Now that we've identified the components in our mock, let's arrange them into a hierarchy.",
-				"Now that we've identified the components in our mock, let's arrange them into a hierarchy.",
-			]
-		};
 		const navbar = (
 				<Navbar>
 					<Navbar.Header>
@@ -86,6 +121,7 @@ export default class App extends React.Component {
 					</Nav>
 				</Navbar>
 		);
+
     return (
 			<Grid>
 				{navbar}
@@ -94,11 +130,11 @@ export default class App extends React.Component {
 						<Article
 						handleSelect={this.handleSelect}
 						selectedSentence={this.state.selectedSentence}
-						sentences={article.sentences} title={article.title}/>
+						article={this.state.article} />
 					</Col>
 					<Col md={4}>
 						<EditTranslation selected={this.state.selectedSentence!=null}
-						original={article.sentences[this.state.selectedSentence]}
+						original={this.originalSentence()}
 						/>
 					</Col>
 				</Row>
