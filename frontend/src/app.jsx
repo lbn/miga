@@ -1,87 +1,12 @@
-import styles from './index.scss';
 import React from 'react';
 import { Navbar, Nav, NavItem, Button, Grid, Row, Col, FormGroup, FormControl} from 'react-bootstrap';
 
-class Sentence extends React.Component {
-	constructor(props) {
-		super(props);
-		this.handleSelectArticle = props.handleSelect;
-		this.handleSelect = this.handleSelect.bind(this);
-	}
+import styles from './index.scss';
+import ArticleService from './service_article.js';
+import Sentence from './sentence.jsx';
+import Article from './article.jsx';
+import EditTranslation from './edit_translation.jsx';
 
-	handleSelect() {
-		this.handleSelectArticle(this);
-	}
-
-	render() {
-		return (
-				<span
-					className={this.props.selected ? styles.selected : null}
-					onClick={this.handleSelect}>{this.props.sentence}</span>
-		)
-	}
-}
-
-class Article extends React.Component {
-	render() {
-		if (this.props.article == null) {
-			return <div></div>
-		}
-		let sentences = this.props.article.sentences
-			.map((s,index) => <Sentence
-					id={index}
-					key={index}
-					selected={this.props.selectedSentence == index}
-					sentence={s}
-					handleSelect={this.props.handleSelect} />);
-		return (
-				<div>
-					<div>{sentences}</div>
-					<span>Selected sentence: {this.props.selectedSentence}</span>
-				</div>
-		)
-	}
-}
-
-class EditTranslation extends React.Component {
-	constructor(props) {
-		super(props);
-		this.articleService = new ArticleService();
-	}
-	render() {
-		return (
-				<div className={!this.props.selected?"hidden":""}>
-					<div>{this.props.original}</div>
-					<FormGroup>
-						<FormControl componentClass="textarea" placeholder="Translation" />
-					</FormGroup>
-					<Button bsStyle="primary">Submit</Button>
-				</div>
-		)
-	}
-}
-
-class ArticleService {
-	getOriginal(id) {
-		//return fetch(`/article/${id}/original`)
-		return new Promise(function(resolve, reject){
-			const article = {
-				title: "Firma esta petición: La culpa del machismo de Maluma es mía",
-				sentences: [
-					"Está últimamente la tropa moral en plan comando.",
-					"Esto está bien, esto está mal, esto hay que prohibir y esto hay que cantar.",
-					"Y uno, que nunca ha sido amigo de la censura, no acaba de entender qué problema ven ahora en la (pésima) canción de un tal Maluma que rapea (o eso se intuye) una canción titulada Cuatro babys.",
-					"La letra del tema es infame, vale, en eso estamos de acuerdo.",
-					"Es grosera, infantil, 'falocéntrica' y cosifica a la mujer.",
-					"Todo ello es de un gusto pésimo y de una mala educación terrible...",
-					"¡Hey!",
-					"Aquí quería llegar... de una educación terrible.",
-				]
-			};
-			resolve(article);
-		});
-	}
-}
 
 export default class App extends React.Component {
 	constructor(props) {

@@ -1,6 +1,13 @@
 .selected {
-    background-color: red;
-    border-radius: 5px;
-    color: white;
-    padding: 5px;
+	background-color: #FFE7E7;
+	border-radius: 3px;
+}
+
+.sentence {
+	padding: 0 3px;
+}
+
+.sentence:hover:not(.selected) {
+	background-color: #efefef;
+	border-radius: 3px;
 }
