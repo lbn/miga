@@ -6,7 +6,12 @@ export default class Article extends React.Component {
 		if (this.props.article.original == null || this.props.article.translated == null) {
 			return <div></div>
 		}
-		let sentences = this.props.article.original.sentences
+		let type = "original";
+		if (this.props.type == "translated") {
+			type = "translated";
+		}
+
+		let sentences = this.props.article[type].sentences
 			.map((s,index) => <Sentence
 					id={index+1}
 					key={index+1}
@@ -19,11 +24,10 @@ export default class Article extends React.Component {
 						id={0}
 						key={0}
 						selected={this.props.selectedSentence == 0}
-						sentence={this.props.article.original.title}
+						sentence={this.props.article[type].title}
 						title={true}
 						handleSelect={this.props.handleSelect} />
 					<div>{sentences}</div>
-					<span>Selected sentence: {this.props.selectedSentence}</span>
 				</div>
 		)
 	}

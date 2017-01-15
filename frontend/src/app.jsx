@@ -1,14 +1,15 @@
 import React from 'react';
-import { Navbar, Nav, NavItem, Grid, Row, Col} from 'react-bootstrap';
+import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from 'react-bootstrap';
 
-export default class ArticleOriginal extends React.Component {
+export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		console.log("App");
 		console.log(props);
 	}
 	render() {
-		const navbar = (
+    return (
+			<Grid>
 				<Navbar>
 					<Navbar.Header>
 						<Navbar.Brand>
@@ -18,12 +19,9 @@ export default class ArticleOriginal extends React.Component {
 					<Nav>
 						<NavItem eventKey={1} href="/about">About</NavItem>
 					</Nav>
+					{this.props.nav}
 				</Navbar>
-		);
-    return (
-			<Grid>
-				{navbar}
-				{this.props.children}
+				{this.props.content}
 			</Grid>
 			)
 	}
