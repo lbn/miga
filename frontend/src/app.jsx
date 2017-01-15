@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navbar, Nav, NavItem, Button, Grid, Row, Col, FormGroup, FormControl} from 'react-bootstrap';
+import update from 'immutability-helper';
 
 import styles from './index.scss';
 import ArticleService from './service_article.js';
@@ -48,7 +49,19 @@ export default class App extends React.Component {
 	}
 
 	submitTranslation(translation) {
-		return this.articleService.submitTranslation(this.props.id, this.state.selectedSentence, translation);
+		return this.articleService.submitTranslation(this.props.id, this.state.selectedSentence, translation)
+			.then(() => {
+				let sentenceUpdate = {};
+				sentenceUpdate[this.state.selectedSentence-1] = {$set: translation};
+
+				this.setState({
+					article: update(this.state.article, {
+						translated: {
+							sentences: sentenceUpdate
+						}
+					})
+				});
+			});
 	}
 
   render() {

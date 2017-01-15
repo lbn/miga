@@ -2,27 +2,30 @@ import React from 'react';
 import ArticleService from './service_article.js';
 import styles from './index.scss';
 import { Button, FormGroup, FormControl} from 'react-bootstrap';
+import log from 'loglevel';
 
 export default class EditTranslation extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {translation: ""};
+		this.state = {potentialTranslation: ""};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	handleChange(event) {
-		this.setState({translation: event.target.value});
+		this.setState({potentialTranslation: event.target.value});
 	}
 
 	handleSubmit(event) {
 		event.preventDefault();
-		if (this.state.translation == "") {
-			console.error("Tried to submit a blank translation");
+		if (this.state.potentialTranslation == "") {
+			log.error("Tried to submit a blank potentialTranslation");
 			return;
 		}
-		this.props.submitTranslation(this.state.translation).then(() => {
-			this.setState({translation: ""})
+		this.props.submitTranslation(this.state.potentialTranslation).then((ttt) => {
+			// success
+			// clear the potentialTranslation textbox
+			this.setState({potentialTranslation: ""});
 		});
 	}
 
@@ -36,7 +39,7 @@ export default class EditTranslation extends React.Component {
 							<FormControl
 								componentClass="textarea"
 								placeholder="Translation"
-								value={this.state.translation}
+								value={this.state.potentialTranslation}
 								onChange={this.handleChange}/>
 						</FormGroup>
 						<Button bsStyle="primary" type="submit">Submit</Button>
