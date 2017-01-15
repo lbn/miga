@@ -1,22 +1,19 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import { Router, Route, browserHistory} from 'react-router'
+import ArticleOriginal from './article_original.jsx';
 import App from './app.jsx';
+import Home from './home.jsx';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 import log from 'loglevel';
 
 log.setLevel("debug");
 
-render( <AppContainer><App id={1}/></AppContainer>, document.querySelector("#app"));
-
-if (module && module.hot) {
-  module.hot.accept('./app.jsx', () => {
-    const App = require('./app.jsx').default;
-    render(
-      <AppContainer>
-        <App id={1}/>
-      </AppContainer>,
-      document.querySelector("#app")
-    );
-  });
-}
+render((
+  <Router history={browserHistory}>
+    <Route path="/" component={App}>
+      <Route path="/article/:id" component={ArticleOriginal}/>
+    </Route>
+  </Router>
+	), document.querySelector("#app"))
