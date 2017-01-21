@@ -11,7 +11,7 @@ export default class Article extends React.Component {
 			type = "translated";
 		}
 
-		let sentences = this.props.article[type].sentences
+		let sentences = this.props.article[type].sentences.slice(1)
 			.map((s,index) => <Sentence
 					id={index+1}
 					key={index+1}
@@ -24,7 +24,7 @@ export default class Article extends React.Component {
 						id={0}
 						key={0}
 						selected={this.props.selectedSentence == 0}
-						sentence={this.props.article[type].title}
+						sentence={this.props.article[type].sentences[0]}
 						title={true}
 						handleSelect={this.props.handleSelect} />
 					<div>{sentences}</div>
