@@ -2,7 +2,7 @@ import log from 'loglevel';
 
 export default class ArticleService {
 	constructor() {
-		this.baseURL = "http://localhost:8800";
+		this.baseURL = "/api";
 	}
 
 	getOriginal(id) {
