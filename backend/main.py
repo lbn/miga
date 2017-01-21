@@ -1,28 +1,11 @@
-from flask import Flask, jsonify, request
-app = Flask("immersion")
+# from flask import Flask, jsonify, request
+from flask import request
+from flask_api import FlaskAPI, status
+from models import Article, Sentence, db
+from pony.orm import db_session
 
-article = {
-    "original": {
-        "sentences": [
-            "Firma esta petición: La culpa del machismo de Maluma es mía",
-            "Está últimamente la tropa moral en plan comando.",
-            "Esto está bien, esto está mal, esto hay que prohibir y esto hay que cantar.",
-            "Y uno, que nunca ha sido amigo de la censura, no acaba de entender qué problema ven ahora en la (pésima) canción de un tal Maluma que rapea (o eso se intuye) una canción titulada Cuatro babys.",
-            "La letra del tema es infame, vale, en eso estamos de acuerdo.",
-            "Es grosera, infantil, 'falocéntrica' y cosifica a la mujer.",
-            "Todo ello es de un gusto pésimo y de una mala educación terrible...",
-            "¡Hey!",
-            "Aquí quería llegar... de una educación terrible.",
-        ]
-    },
-    "translated": {
-        "sentences": ["Sign this petition: The blame of Maluma's machismo is on me"]+[""]*8,
-    }
-}
+app = FlaskAPI("immersion")
 
-articles = {
-    "1": article,
-}
 
 def article_response(article):
     return {
@@ -30,24 +13,64 @@ def article_response(article):
         "sentences": article["sentences"][1:]
     }
 
-@app.route("/article/<aid>/original")
-def article_original(aid):
-    return jsonify(**article_response(articles[aid]["original"]))
 
-@app.route("/article/<aid>/translated")
+@app.route("/article/<int:aid>/original")
+@db_session
+def article_original(aid):
+    a = Article.get(id=aid)
+    return {"sentences":
+            [s.original for s in a.sentences.order_by(Sentence.index)]}
+
+
+@app.route("/article/<int:aid>/translated")
+@db_session
 def article_translated(aid):
-    return jsonify(**article_response(articles[aid]["translated"]))
+    a = Article.get(id=aid)
+    return {"sentences":
+            ([s.translation for s in a.sentences.order_by(Sentence.index)])}
+
 
 @app.route("/article/<aid>/translate", methods=["POST", "OPTIONS"])
+@db_session
 def translate_sentence(aid):
-    req_json = request.get_json(silent=True)
+    req_json = request.data
     print(req_json)
+    a = Article.get(id=aid)
+    this_sent = Sentence.get(article=a, index=int(req_json["sentenceID"]))
+    this_sent.translation = req_json["translation"]
+    return {"success": True}
 
-    translated_sentences = articles[aid]["translated"]["sentences"]
-    translated_sentences[int(req_json["sentenceID"])] = req_json["translation"]
-    print(translated_sentences)
-    return jsonify(success=True)
 
+def split_sentences(text):
+    for sent in text.split("."):
+        if len(sent) > 0:
+            yield sent.strip()+"."
+
+
+@app.route("/upload/text", methods=["GET", "POST", "OPTIONS"])
+@db_session
+def upload_text():
+    req_json = request.data
+    if "text" not in req_json or "title" not in req_json:
+        return {}, status.HTTP_400_BAD_REQUEST
+
+    article = Article()
+    for i, sent in enumerate(split_sentences(req_json["text"])):
+        Sentence(original=sent.strip(), index=i, article=article)
+    return {"articleID": article.id}
+
+
+@app.route("/upload/url", methods=["POST", "OPTIONS"])
+def upload_url():
+    return ""
+
+
+@app.route("/")
+def index():
+    return "immersion"
 
 if __name__ == "__main__":
+    db.bind("sqlite", "immersion.sqlite", create_db=True)
+    db.generate_mapping(create_tables=True)
+
     app.run(host="0.0.0.0")
