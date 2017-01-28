@@ -13,6 +13,15 @@ def article_response(article):
         "sentences": article["sentences"][1:]
     }
 
+@app.route("/article/list")
+@db_session
+def article_list():
+    articles = db.select("""SELECT a.id, s.original FROM Article AS a
+                    JOIN Sentence AS s ON s.article = a.id AND s.`index` = 0
+                    ORDER BY a.id DESC
+                    """)
+    return {"articles": [{"id":article[0], "title":article[1]} for article in articles]}
+
 
 @app.route("/article/<int:aid>/original")
 @db_session
