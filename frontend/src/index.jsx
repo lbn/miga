@@ -7,6 +7,7 @@ import ArticleSplit from './article_split.jsx';
 import ArticleFormatSwitcher from './article_nav.jsx';
 import App from './app.jsx';
 import Home from './home.jsx';
+import Upload from './upload.jsx';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 import log from 'loglevel';
 import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from 'react-bootstrap';
@@ -18,6 +19,7 @@ render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
 			<IndexRoute components={{ content: Home }} />
+			<Route path="/upload" components={{ content: Upload }} />
 			<Route path="/article/:id/split" components={{ content: ArticleSplit, nav: ArticleFormatSwitcher}} />
 			<Route path="/article/:id/original" components={{ content: ArticleOriginal, nav: ArticleFormatSwitcher}} />
     </Route>

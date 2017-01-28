@@ -2,7 +2,7 @@
 from flask import request
 from flask_api import FlaskAPI, status
 from models import Article, Sentence, db
-from pony.orm import db_session
+from pony.orm import db_session, commit
 
 app = FlaskAPI("immersion")
 
@@ -64,8 +64,10 @@ def upload_text():
         return {}, status.HTTP_400_BAD_REQUEST
 
     article = Article()
+    Sentence(original=req_json["title"].strip(), index=0, article=article)
     for i, sent in enumerate(split_sentences(req_json["text"])):
-        Sentence(original=sent.strip(), index=i, article=article)
+        Sentence(original=sent.strip(), index=i+1, article=article)
+    commit()
     return {"articleID": article.id}
 
 
