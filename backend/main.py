@@ -3,6 +3,7 @@ from flask import request
 from flask_api import FlaskAPI, status
 from models import Article, Sentence, db
 from pony.orm import db_session, commit
+import newspaper
 
 app = FlaskAPI("immersion")
 
@@ -39,7 +40,7 @@ def article_translated(aid):
             ([s.translation for s in a.sentences.order_by(Sentence.index)])}
 
 
-@app.route("/article/<aid>/translate", methods=["POST", "OPTIONS"])
+@app.route("/article/<aid>/translate", methods=["POST"])
 @db_session
 def translate_sentence(aid):
     req_json = request.data
@@ -56,24 +57,33 @@ def split_sentences(text):
             yield sent.strip()+"."
 
 
-@app.route("/upload/text", methods=["GET", "POST", "OPTIONS"])
-@db_session
+@app.route("/upload/text", methods=["GET", "POST"])
 def upload_text():
     req_json = request.data
     if "text" not in req_json or "title" not in req_json:
         return {}, status.HTTP_400_BAD_REQUEST
+    return create_article(req_json["title"], req_json["text"])
 
+@db_session
+def create_article(title, text):
     article = Article()
-    Sentence(original=req_json["title"].strip(), index=0, article=article)
-    for i, sent in enumerate(split_sentences(req_json["text"])):
+    Sentence(original=title.strip(), index=0, article=article)
+    for i, sent in enumerate(split_sentences(text)):
         Sentence(original=sent.strip(), index=i+1, article=article)
     commit()
     return {"articleID": article.id}
 
 
-@app.route("/upload/url", methods=["POST", "OPTIONS"])
+@app.route("/upload/url", methods=["POST"])
 def upload_url():
-    return ""
+    req_json = request.data
+    if "url" not in req_json:
+        return {}, status.HTTP_400_BAD_REQUEST
+    url = req_json["url"]
+    article = newspaper.Article(url)
+    article.download()
+    article.parse()
+    return create_article(article.title, article.text)
 
 
 @app.route("/")
