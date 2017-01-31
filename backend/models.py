@@ -4,6 +4,7 @@ db = Database()
 
 class Article(db.Entity):
     sentences = Set("Sentence")
+    source = Required(str)
 
 class Sentence(db.Entity):
     original = Required(str)

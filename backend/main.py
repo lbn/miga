@@ -1,4 +1,5 @@
-# from flask import Flask, jsonify, request
+from urllib.parse import urlparse
+
 from flask import request
 from flask_api import FlaskAPI, status
 from models import Article, Sentence, db
@@ -17,11 +18,15 @@ def article_response(article):
 @app.route("/article/list")
 @db_session
 def article_list():
-    articles = db.select("""SELECT a.id, s.original FROM Article AS a
+    articles = db.select("""SELECT a.id, s.original, a.source FROM Article AS a
                     JOIN Sentence AS s ON s.article = a.id AND s.`index` = 0
                     ORDER BY a.id DESC
                     """)
-    return {"articles": [{"id":article[0], "title":article[1]} for article in articles]}
+    return {"articles": [{
+        "id":article[0],
+        "title":article[1],
+        "source": article[2]
+    } for article in articles]}
 
 
 @app.route("/article/<int:aid>/original")
@@ -65,8 +70,8 @@ def upload_text():
     return create_article(req_json["title"], req_json["text"])
 
 @db_session
-def create_article(title, text):
-    article = Article()
+def create_article(title, text, source="text"):
+    article = Article(source=source)
     Sentence(original=title.strip(), index=0, article=article)
     for i, sent in enumerate(split_sentences(text)):
         Sentence(original=sent.strip(), index=i+1, article=article)
@@ -83,7 +88,7 @@ def upload_url():
     article = newspaper.Article(url)
     article.download()
     article.parse()
-    return create_article(article.title, article.text)
+    return create_article(article.title, article.text, source=urlparse(url).netloc)
 
 
 @app.route("/")

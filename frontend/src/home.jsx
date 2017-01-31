@@ -19,7 +19,7 @@ export default class Home extends React.Component {
 		console.log(this.state.list)
 		let articles = this.state.list.map((article, index) => {
 			return <ListGroupItem key={index} header={article.title} href={`/article/${article.id}/original`}>
-				bbc.com - uploaded by Anon on 2017-01-28
+				{article.source} - uploaded by Anon on 2017-01-28
 				</ListGroupItem>;
 		});
 		return <div>
