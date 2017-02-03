@@ -35,13 +35,12 @@ class TextUploader extends React.Component {
 		this.articleService.uploadText(this.state.title, this.state.text).then(res => {
 			// success
 			this.setState({title: "", text: ""});
-			console.log(res);
 			browserHistory.push(`/article/${res.articleID}/original`);
 		});
 	}
 
 	render() {
-		return <form id="formUpload" onSubmit={this.handleSubmit}>
+		return <form id="formUploadText" onSubmit={this.handleSubmit}>
 			<FormGroup controlId="formTitle">
 				<FormControl
 				value={this.state.title}
@@ -63,6 +62,48 @@ class TextUploader extends React.Component {
 	}
 }
 
+class URLUploader extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { url: "" };
+		this.articleService = new ArticleService();
+		this.handleURLChange = this.handleURLChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+
+
+	handleURLChange(e) {
+		this.setState({ url: e.target.value });
+	}
+
+	handleSubmit(event) {
+		event.preventDefault();
+		if (this.state.url == "") {
+			log.error("Tried to upload an article with empty URL");
+			return;
+		}
+		this.articleService.uploadURL(this.state.url).then(res => {
+			// success
+			this.setState({url: ""});
+			browserHistory.push(`/article/${res.articleID}/original`);
+		});
+	}
+
+	render() {
+		return <form id="formUploadURL" onSubmit={this.handleSubmit}>
+			<FormGroup controlId="formURL">
+				<FormControl
+				value={this.state.url}
+				type="text"
+				required="true"
+				placeholder="URL"
+				onChange={this.handleURLChange} />
+			</FormGroup>
+			<Button bsStyle="primary" type="submit">Submit</Button>
+		</form>
+	}
+}
+
 export default class Upload extends React.Component {
 	constructor(props) {
 		super(props);
@@ -72,8 +113,11 @@ export default class Upload extends React.Component {
 	render() {
 		return <div>
 			<h1>Upload</h1>
-			<Tabs id={"upload-text"} defaultActiveKey={1}>
-				<Tab eventKey={1} title="Text">
+			<Tabs id={"upload"} defaultActiveKey={1}>
+				<Tab eventKey={1} title="URL">
+					<URLUploader />
+				</Tab>
+				<Tab eventKey={2} title="Text">
 					<TextUploader />
 				</Tab>
 			</Tabs>

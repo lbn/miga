@@ -47,4 +47,15 @@ export default class ArticleService {
 			return a.json();
 		});
 	}
+
+	uploadURL(url) {
+		log.debug(`ArticleService.uploadURL(url:${url})`);
+		return fetch(`${this.baseURL}/upload/url`, {
+			method: "POST",
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify({url: url}),
+		}).then(a => {
+			return a.json();
+		});
+	}
 }
