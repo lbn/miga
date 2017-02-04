@@ -32,14 +32,14 @@ export default class ArticleSplit extends React.Component {
 
 	selectedSentenceText(type) {
 		const validTypes = ["original", "translated"];
+		console.log(type);
 		if (!validTypes.includes(type) || this.state.article[type] == null) {
 			return null
 		}
-		if (this.state.selectedSentence == 0) {
-			return this.state.article[type].title;
-		} else {
-			return this.state.article[type].sentences[this.state.selectedSentence-1];
-		}
+		let sentence = this.state.article[type].sentences[this.state.selectedSentence];
+		let s = sentence ? sentence.text : "";
+		console.log(s);
+		return s;
 	}
 
   render() {

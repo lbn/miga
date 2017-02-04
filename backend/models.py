@@ -11,3 +11,4 @@ class Sentence(db.Entity):
     translation = Optional(str)
     article = Required(Article)
     index = Required(int)
+    para_index = Required(int)

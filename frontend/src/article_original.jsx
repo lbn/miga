@@ -41,14 +41,15 @@ export default class ArticleOriginal extends React.Component {
 		if (!validTypes.includes(type) || this.state.article[type] == null) {
 			return null
 		}
-		return this.state.article[type].sentences[this.state.selectedSentence];
+		let sentence = this.state.article[type].sentences[this.state.selectedSentence];
+		return sentence ? sentence.text : "";
 	}
 
 	submitTranslation(translation) {
 		return this.articleService.submitTranslation(this.props.params.id, this.state.selectedSentence, translation)
 			.then(() => {
 				let sentenceUpdate = {};
-				sentenceUpdate[this.state.selectedSentence] = {$set: translation};
+				sentenceUpdate[this.state.selectedSentence] = {text: {$set: translation}};
 
 				this.setState({
 					article: update(this.state.article, {

@@ -18,12 +18,12 @@ class Sentence extends React.Component {
 		if (this.props.title) {
 			return (
 					<h3 className={classes}
-						onClick={this.handleSelect}>{this.props.sentence}</h3>
+						onClick={this.handleSelect}>{this.props.sentence.text}</h3>
 			)
 		} else {
 			return (
 					<span className={classes}
-						onClick={this.handleSelect}>{this.props.sentence}</span>
+						onClick={this.handleSelect}>{this.props.sentence.text}</span>
 			)
 		}
 	}

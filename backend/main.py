@@ -8,13 +8,6 @@ import importing
 app = FlaskAPI("immersion")
 
 
-def article_response(article):
-    return {
-        "title": article["sentences"][0],
-        "sentences": article["sentences"][1:]
-    }
-
-
 @app.route("/article/list")
 @db_session
 def article_list():
@@ -34,7 +27,8 @@ def article_list():
 def article_original(aid):
     a = Article.get(id=aid)
     return {"sentences":
-            [s.original for s in a.sentences.order_by(Sentence.index)]}
+            [{"text": s.original, "paraIndex": s.para_index, "index": s.index}
+             for s in a.sentences.order_by(Sentence.index)]}
 
 
 @app.route("/article/<int:aid>/translated")
@@ -42,7 +36,9 @@ def article_original(aid):
 def article_translated(aid):
     a = Article.get(id=aid)
     return {"sentences":
-            ([s.translation for s in a.sentences.order_by(Sentence.index)])}
+            [{"text": s.translation, "paraIndex": s.para_index,
+              "index": s.index}
+             for s in a.sentences.order_by(Sentence.index)]}
 
 
 @app.route("/article/<aid>/translate", methods=["POST"])

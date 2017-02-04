@@ -1,23 +1,30 @@
 from urllib.parse import urlparse
+from collections import namedtuple
 
 from pony.orm import db_session, commit
 import newspaper
 
 from models import Article, Sentence
 
+SplitSentence = namedtuple("SplitSentence", "text para_index")
+
 
 def split_sentences(text):
-    for sent in text.split("."):
-        if len(sent) > 0:
-            yield sent.strip()+"."
+    paras = text.split("\n\n")
+    for pi, para in enumerate(paras):
+        for sent in para.split("."):
+            if len(sent) == 0:
+                continue
+            yield SplitSentence(text=sent.strip()+".", para_index=pi)
 
 
 @db_session
 def create_article(title, text, source="text"):
     article = Article(source=source)
-    Sentence(original=title.strip(), index=0, article=article)
+    Sentence(original=title.strip(), index=0, article=article, para_index=0)
     for i, sent in enumerate(split_sentences(text)):
-        Sentence(original=sent.strip(), index=i+1, article=article)
+        Sentence(original=sent.text, index=i+1, para_index=sent.para_index+1,
+                 article=article)
     commit()
     return {"articleID": article.id}
 
