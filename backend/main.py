@@ -1,10 +1,9 @@
-from urllib.parse import urlparse
-
 from flask import request
 from flask_api import FlaskAPI, status
 from models import Article, Sentence, db
-from pony.orm import db_session, commit
-import newspaper
+from pony.orm import db_session
+
+import importing
 
 app = FlaskAPI("immersion")
 
@@ -15,6 +14,7 @@ def article_response(article):
         "sentences": article["sentences"][1:]
     }
 
+
 @app.route("/article/list")
 @db_session
 def article_list():
@@ -23,8 +23,8 @@ def article_list():
                     ORDER BY a.id DESC
                     """)
     return {"articles": [{
-        "id":article[0],
-        "title":article[1],
+        "id": article[0],
+        "title": article[1],
         "source": article[2]
     } for article in articles]}
 
@@ -56,27 +56,12 @@ def translate_sentence(aid):
     return {"success": True}
 
 
-def split_sentences(text):
-    for sent in text.split("."):
-        if len(sent) > 0:
-            yield sent.strip()+"."
-
-
 @app.route("/upload/text", methods=["GET", "POST"])
 def upload_text():
     req_json = request.data
     if "text" not in req_json or "title" not in req_json:
         return {}, status.HTTP_400_BAD_REQUEST
-    return create_article(req_json["title"], req_json["text"])
-
-@db_session
-def create_article(title, text, source="text"):
-    article = Article(source=source)
-    Sentence(original=title.strip(), index=0, article=article)
-    for i, sent in enumerate(split_sentences(text)):
-        Sentence(original=sent.strip(), index=i+1, article=article)
-    commit()
-    return {"articleID": article.id}
+    return importing.create_article(req_json["title"], req_json["text"])
 
 
 @app.route("/upload/url", methods=["POST"])
@@ -85,10 +70,7 @@ def upload_url():
     if "url" not in req_json:
         return {}, status.HTTP_400_BAD_REQUEST
     url = req_json["url"]
-    article = newspaper.Article(url)
-    article.download()
-    article.parse()
-    return create_article(article.title, article.text, source=urlparse(url).netloc)
+    return importing.upload_url(url)
 
 
 @app.route("/")
