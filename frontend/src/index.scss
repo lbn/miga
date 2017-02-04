@@ -7,6 +7,11 @@
 	padding: 0 3px;
 }
 
+.word:hover {
+	color: #333333;
+	border-bottom: 2px dashed #999;
+}
+
 .sentence:hover:not(.selected) {
 	background-color: #efefef;
 	border-radius: 3px;

@@ -58,4 +58,15 @@ export default class ArticleService {
 			return a.json();
 		});
 	}
+
+	translate(text) {
+		log.debug(`ArticleService.translate(text:${text})`);
+		return fetch(`${this.baseURL}/translate/yandex/translate`, {
+			method: "POST",
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify({text: text}),
+		}).then(a => {
+			return a.json();
+		});
+	}
 }

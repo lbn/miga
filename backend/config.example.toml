@@ -1,0 +1,3 @@
+[integrations]
+  [integrations.yandex-translate]
+  key = "trnsl.1.1.2017..."

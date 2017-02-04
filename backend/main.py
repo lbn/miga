@@ -4,8 +4,11 @@ from models import Article, Sentence, db
 from pony.orm import db_session
 
 import importing
+from translate import translate_api
 
 app = FlaskAPI("immersion")
+
+app.register_blueprint(translate_api, url_prefix="/translate")
 
 
 @app.route("/article/list")
