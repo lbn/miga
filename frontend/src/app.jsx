@@ -4,8 +4,6 @@ import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from 'react-
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
-		console.log("App");
-		console.log(props);
 	}
 	render() {
     return (
