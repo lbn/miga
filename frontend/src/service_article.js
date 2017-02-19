@@ -5,13 +5,6 @@ export default class ArticleService {
 		this.baseURL = "/api";
 	}
 
-	getList(id) {
-		log.debug(`ArticleService.list(id:${id})`);
-		return fetch(`${this.baseURL}/article/list`).then(a => {
-			return a.json();
-		});
-	}
-
 	getOriginal(id) {
 		log.debug(`ArticleService.getOriginal(id:${id})`);
 		return fetch(`${this.baseURL}/article/${id}/original`).then(a => {

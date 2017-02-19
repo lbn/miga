@@ -1,9 +1,10 @@
 from flask import request
 from flask_api import FlaskAPI, status
-from models import Article, Sentence, db
-from pony.orm import db_session
+from pony.orm import db_session, count
+import pycountry
 
 import importing
+from models import Article, Sentence, Language, db
 from translate import translate_api
 
 app = FlaskAPI("immersion")
@@ -11,11 +12,12 @@ app = FlaskAPI("immersion")
 app.register_blueprint(translate_api, url_prefix="/translate")
 
 
-@app.route("/article/list")
+@app.route("/article/list/<int:lang_original>/<int:lang_target>")
 @db_session
-def article_list():
+def article_list(lang_original, lang_target):
     articles = db.select("""SELECT a.id, s.original, a.source FROM Article AS a
                     JOIN Sentence AS s ON s.article = a.id AND s.`index` = 0
+                    WHERE a.lang_original = $lang_original AND a.lang_target = $lang_target
                     ORDER BY a.id DESC
                     """)
     return {"articles": [{
@@ -71,13 +73,33 @@ def upload_url():
     url = req_json["url"]
     return importing.upload_url(url)
 
+@app.route("/language/list")
+@db_session
+def language_list():
+    return [{"id": lang.id, "name": lang.name} for lang in Language.select()]
 
 @app.route("/")
 def index():
     return "immersion"
 
-if __name__ == "__main__":
+@db_session
+def populate_languages():
+    if count(lang for lang in Language) != 0:
+        return
+
+    with open("languages.txt") as f:
+        for name in f.readlines():
+            name = name.strip()
+            Language(name=name, code=pycountry.languages.get(name=name).alpha_2)
+
+
+
+def main():
     db.bind("sqlite", "immersion.sqlite", create_db=True)
     db.generate_mapping(create_tables=True)
+    populate_languages()
 
     app.run(host="0.0.0.0")
+
+if __name__ == "__main__":
+    main()

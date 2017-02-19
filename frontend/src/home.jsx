@@ -1,23 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router'
+import { connect } from 'react-redux'
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import ArticleService from './service_article.js';
 
-export default class Home extends React.Component {
+import { loadArticleList } from "./actions";
+
+
+class Home extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			list: [],
-		};
-		this.articleService = new ArticleService();
-		this.articleService.getList().then(res => {
-			this.setState({list: res.articles});
-		});
+	}
+
+	componentWillMount() {
+		this.props.loadArticleList();
+	}
+
+	componentWillReceiveProps(nextProps) {
+		// Reload if lang changes
+		if (nextProps.lang != this.props.lang) {
+			this.props.loadArticleList();
+		}
 	}
 
 	render() {
-		console.log(this.state.list)
-		let articles = this.state.list.map((article, index) => {
+		let articles = this.props.articles.map((article, index) => {
 			return <ListGroupItem key={index} header={article.title} href={`/article/${article.id}/original`}>
 				{article.source} - uploaded by Anon on 2017-01-28
 				</ListGroupItem>;
@@ -30,3 +37,14 @@ export default class Home extends React.Component {
 			</div>
 	}
 }
+
+const mapStateToProps = (state, ownProps) => {
+	return {
+		articles: state.entities.articles,
+		lang: state.lang
+	};
+};
+
+export default connect(mapStateToProps, {
+	loadArticleList
+})(Home);

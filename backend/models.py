@@ -2,9 +2,19 @@ from pony.orm import *
 
 db = Database()
 
+class Language(db.Entity):
+    code = Required(str, unique=True)
+    name = Required(str)
+
+    articles_original = Set("Article")
+    articles_target = Set("Article")
+
 class Article(db.Entity):
     sentences = Set("Sentence")
     source = Required(str)
+
+    lang_original = Required(Language, reverse="articles_original")
+    lang_target = Required(Language, reverse="articles_target")
 
 class Sentence(db.Entity):
     original = Required(str)
