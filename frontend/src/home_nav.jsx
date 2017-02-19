@@ -4,15 +4,8 @@ import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from 'react-
 import { connect } from "react-redux";
 
 import styles from './index.scss';
-import { changeLanguages } from "./actions";
+import { changeLanguages, languagesList } from "./actions";
 
-
-var options = [
-    { label: 'English', value: '1' },
-    { label: 'Spanish', value: '2' },
-    { label: 'Polish', value: '3' },
-    { label: 'English', value: '4' },
-];
 
 class HomeNav extends React.Component {
 	constructor(props) {
@@ -30,6 +23,10 @@ class HomeNav extends React.Component {
 		}
 	}
 
+	componentWillMount() {
+		this.props.languagesList();
+	}
+
 	render() {
 		return <Navbar.Collapse className={"pull-right"}>
 				<Navbar.Text>
@@ -39,7 +36,7 @@ class HomeNav extends React.Component {
 					className={styles.navbarLangSelect}
 					name="lang-original"
 					value={this.state.original}
-					options={options}
+					options={this.props.languages}
 					onChange={this.handleFromChange}
 				/>
 				<Navbar.Text>
@@ -49,7 +46,7 @@ class HomeNav extends React.Component {
 					className={styles.navbarLangSelect}
 					name="lang-target"
 					value={this.state.target}
-					options={options}
+					options={this.props.languages}
 					onChange={this.handleToChange}
 				/>
 		</Navbar.Collapse>
@@ -58,10 +55,13 @@ class HomeNav extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		lang: state.lang
+		lang: state.lang,
+		languages: state.entities.languages.map(
+				lang => ({ value: lang.id.toString(), label: lang.name }))
 	};
 };
 
 export default connect(mapStateToProps, {
-	changeLanguages
+	changeLanguages,
+	languagesList
 })(HomeNav);

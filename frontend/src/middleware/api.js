@@ -3,7 +3,7 @@ const BASE_URL = "/api/";
 const callApi = (endpoint) => {
 	return fetch(BASE_URL + endpoint).then(res => {
 		return res.json().then(json => {
-			if (!res.ok || !json.articles) {
+			if (!res.ok) {
 				return Promise.reject(json);
 			}
 			return json;
