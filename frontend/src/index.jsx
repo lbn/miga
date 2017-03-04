@@ -15,11 +15,7 @@ import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from 'react-
 
 import 'react-select/dist/react-select.css';
 
-
-
 log.setLevel("debug");
-
-
 
 render((
   <Router history={browserHistory}>

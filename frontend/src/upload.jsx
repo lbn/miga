@@ -1,10 +1,15 @@
-import React from 'react';
-import { Tab, Tabs, FormGroup, ControlLabel, HelpBlock, FormControl, Button } from 'react-bootstrap';
-import ArticleService from './service_article.js';
-import { browserHistory } from 'react-router'
+import React from "react";
+import { Tab, Tabs, FormGroup, ControlLabel, HelpBlock, FormControl, Button } from "react-bootstrap";
+import { browserHistory } from "react-router";
+import { connect } from "react-redux";
+
+import styles from "./index.scss";
+import ArticleService from "./service_article.js";
+import LanguageSelector from "./components/LanguageSelector";
+import { uploadURL, uploadText } from "./actions";
 
 
-class TextUploader extends React.Component {
+let TextUploader = connect(null, {uploadText})(class TextUploader extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { title: "", text: "" };
@@ -32,10 +37,10 @@ class TextUploader extends React.Component {
 			log.error("Tried to upload text with no body");
 			return;
 		}
-		this.articleService.uploadText(this.state.title, this.state.text).then(res => {
+		this.props.uploadText(this.state.title, this.state.text).then(act => {
 			// success
 			this.setState({title: "", text: ""});
-			browserHistory.push(`/article/${res.articleID}/original`);
+			browserHistory.push(`/article/${act.res.articleID}/original`);
 		});
 	}
 
@@ -57,12 +62,13 @@ class TextUploader extends React.Component {
 				required="true"
 				onChange={this.handleTextChange} />
 			</FormGroup>
+			<div className={styles.languageSelectorUpload}><LanguageSelector /></div>
 			<Button bsStyle="primary" type="submit">Submit</Button>
 			</form>
 	}
-}
+});
 
-class URLUploader extends React.Component {
+let URLUploader = connect(null, {uploadURL})(class URLUploader extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { url: "" };
@@ -82,7 +88,7 @@ class URLUploader extends React.Component {
 			log.error("Tried to upload an article with empty URL");
 			return;
 		}
-		this.articleService.uploadURL(this.state.url).then(res => {
+		uploadURL(this.state.url).then(res => {
 			// success
 			this.setState({url: ""});
 			browserHistory.push(`/article/${res.articleID}/original`);
@@ -99,10 +105,12 @@ class URLUploader extends React.Component {
 				placeholder="URL"
 				onChange={this.handleURLChange} />
 			</FormGroup>
+
+			<div className={styles.languageSelectorUpload}><LanguageSelector /></div>
 			<Button bsStyle="primary" type="submit">Submit</Button>
 		</form>
 	}
-}
+});
 
 export default class Upload extends React.Component {
 	constructor(props) {

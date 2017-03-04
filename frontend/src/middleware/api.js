@@ -1,7 +1,14 @@
 const BASE_URL = "/api/";
 
-const callApi = (endpoint) => {
-	return fetch(BASE_URL + endpoint).then(res => {
+const callApi = (endpoint, data = {}) => {
+	if (!data.headers) {
+			data.headers = {"Content-Type": "application/json"};
+	}
+	console.log(data);
+	if (data.body && typeof data.body != "string") {
+		data.body = JSON.stringify(data.body);
+	}
+	return fetch(BASE_URL + endpoint, data).then(res => {
 		return res.json().then(json => {
 			if (!res.ok) {
 				return Promise.reject(json);
@@ -28,16 +35,13 @@ export default store => next => action => {
 		return finalAction;
 	};
 
-	const [ requestType, successType, failureType ] = types;
-
-
-	return callApi(endpoint).then(
+	return callApi(endpoint, callAction.data).then(
 			res => next(actionWith({
-				res: res,
-				type: successType
+				type: types.SUCCESS,
+				res: res
 			})),
 			error => next(actionWith({
-				type: failureType,
+				type: types.FAILURE,
 				error: error.message || "wat"
 			}))
 	);

@@ -1,12 +1,12 @@
 import update from 'immutability-helper';
 import { merge } from "lodash";
 import { combineReducers } from "redux";
-import { LANGUAGE_LIST_SUCCESS } from "../actions";
+import { LANGUAGE_LIST } from "../actions";
 
 const entities = (state = { articles: [], languages: [] }, action) => {
 	if (action.res && action.res.articles) {
 		return update(state, { articles: { $set: action.res.articles } });
-	} else if (action.type == LANGUAGE_LIST_SUCCESS) {
+	} else if (action.type == LANGUAGE_LIST.SUCCESS) {
 		return update(state, { languages: { $set: action.res } });
 	}
 	return state;

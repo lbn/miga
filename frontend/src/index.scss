@@ -1,3 +1,4 @@
+
 .selected {
 	background-color: #FFE7E7;
 	border-radius: 3px;
@@ -31,5 +32,10 @@ footer {
 	width: 150px;
 	margin-top: 7px;
 	margin-right: 5px;
+	float: left;
+}
+
+.language-selector-upload {
+	width: 100%;
 	float: left;
 }
