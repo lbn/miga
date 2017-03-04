@@ -1,8 +1,7 @@
 from urllib.parse import urlparse
 from collections import namedtuple
 
-from flask import Blueprint, request
-from flask_api import status
+from flask import Blueprint
 from voluptuous import Schema, Required, Url, Coerce
 
 from pony.orm import db_session, commit

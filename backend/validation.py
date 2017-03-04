@@ -24,11 +24,11 @@ class InvalidUsage(Exception):
 def json_schema(schema):
     def decorator(f):
         @functools.wraps(f)
-        def wrapper(a=None):
+        def wrapper(*args, **kwargs):
             try:
                 data = schema(request.data)
                 # TODO: add debug logging
-                return f(data)
+                return f(data, *args, **kwargs)
             except VoluptuousError as e:
                 raise InvalidUsage(message=str(e))
         return wrapper
