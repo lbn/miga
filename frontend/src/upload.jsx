@@ -88,10 +88,10 @@ let URLUploader = connect(null, {uploadURL})(class URLUploader extends React.Com
 			log.error("Tried to upload an article with empty URL");
 			return;
 		}
-		uploadURL(this.state.url).then(res => {
+		this.props.uploadURL(this.state.url).then(act => {
 			// success
 			this.setState({url: ""});
-			browserHistory.push(`/article/${res.articleID}/original`);
+			browserHistory.push(`/article/${act.res.articleID}/original`);
 		});
 	}
 
