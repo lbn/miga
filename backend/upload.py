@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 from collections import namedtuple
+from datetime import datetime
 
 from flask import Blueprint
 from voluptuous import Schema, Required, Url, Coerce
@@ -40,7 +41,10 @@ def upload_url(data):
     article = newspaper.Article(data["url"])
     article.download()
     article.parse()
-    return create_article(**data, source=urlparse(data["url"]).netloc)
+    return create_article(title=article.title,
+                          text=article.text,
+                          lang=data["lang"],
+                          source=urlparse(data["url"]).netloc)
 
 
 def split_sentences(text):
@@ -56,7 +60,8 @@ def split_sentences(text):
 def create_article(title, text, lang, source="text"):
     article = Article(source=source,
                       lang_original=lang["original"],
-                      lang_target=lang["target"])
+                      lang_target=lang["target"],
+                      created_at=datetime.now())
     Sentence(original=title.strip(), index=0, article=article, para_index=0)
     for i, sent in enumerate(split_sentences(text)):
         Sentence(original=sent.text, index=i+1, para_index=sent.para_index+1,

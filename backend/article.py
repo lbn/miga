@@ -10,7 +10,7 @@ article_api = Blueprint("article", __name__)
 @article_api.route("/list/<int:lang_original>/<int:lang_target>")
 @db_session
 def article_list(lang_original, lang_target):
-    articles = db.select("""SELECT a.id, s.original, a.source FROM Article AS a
+    articles = db.select("""SELECT a.id, s.original, a.source, date(a.created_at) FROM Article AS a
                     JOIN Sentence AS s ON s.article = a.id AND s.`index` = 0
                     WHERE a.lang_original = $lang_original AND a.lang_target = $lang_target
                     ORDER BY a.id DESC
@@ -18,7 +18,8 @@ def article_list(lang_original, lang_target):
     return {"articles": [{
         "id": article[0],
         "title": article[1],
-        "source": article[2]
+        "source": article[2],
+        "createdAt": article[3]
     } for article in articles]}
 
 

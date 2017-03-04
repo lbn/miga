@@ -26,7 +26,7 @@ class Home extends React.Component {
 	render() {
 		let articles = this.props.articles.map((article, index) => {
 			return <ListGroupItem key={index} header={article.title} href={`/article/${article.id}/original`}>
-				{article.source} - uploaded by Anon on 2017-01-28
+				{article.source} - uploaded by Anon on {article.createdAt}
 				</ListGroupItem>;
 		});
 		return <div>

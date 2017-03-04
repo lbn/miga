@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pony.orm import *
 
 db = Database()
@@ -12,6 +14,8 @@ class Language(db.Entity):
 class Article(db.Entity):
     sentences = Set("Sentence")
     source = Required(str)
+
+    created_at = Required(datetime)
 
     lang_original = Required(Language, reverse="articles_original")
     lang_target = Required(Language, reverse="articles_target")
