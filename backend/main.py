@@ -1,15 +1,20 @@
 from flask import request
-from flask_api import FlaskAPI, status
+from flask_api import FlaskAPI
 from pony.orm import db_session, count
 import pycountry
 
-import importing
 from models import Article, Sentence, Language, db
 from translate import translate_api
-
+from upload import upload_api
+from validation import InvalidUsage
 app = FlaskAPI("immersion")
 
 app.register_blueprint(translate_api, url_prefix="/translate")
+app.register_blueprint(upload_api, url_prefix="/upload")
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    return error.to_dict(), error.status_code
 
 
 @app.route("/article/list/<int:lang_original>/<int:lang_target>")
@@ -56,22 +61,6 @@ def translate_sentence(aid):
     this_sent.translation = req_json["translation"]
     return {"success": True}
 
-
-@app.route("/upload/text", methods=["GET", "POST"])
-def upload_text():
-    req_json = request.data
-    if "text" not in req_json or "title" not in req_json:
-        return {}, status.HTTP_400_BAD_REQUEST
-    return importing.create_article(req_json["title"], req_json["text"])
-
-
-@app.route("/upload/url", methods=["POST"])
-def upload_url():
-    req_json = request.data
-    if "url" not in req_json:
-        return {}, status.HTTP_400_BAD_REQUEST
-    url = req_json["url"]
-    return importing.upload_url(url)
 
 @app.route("/language/list")
 @db_session
