@@ -6,13 +6,16 @@ from models import Language, db
 from translate import translate_api
 from upload import upload_api
 from article import article_api
+from stats import stats_api
 from validation import InvalidUsage
+from config import config
 
 app = FlaskAPI("immersion")
 
 app.register_blueprint(article_api, url_prefix="/article")
 app.register_blueprint(translate_api, url_prefix="/translate")
 app.register_blueprint(upload_api, url_prefix="/upload")
+app.register_blueprint(stats_api, url_prefix="/stats")
 
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
@@ -41,7 +44,7 @@ def populate_languages():
 
 
 def main():
-    db.bind("sqlite", "immersion.sqlite", create_db=True)
+    db.bind("postgres", **config["db"])
     db.generate_mapping(create_tables=True)
     populate_languages()
 

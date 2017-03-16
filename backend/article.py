@@ -4,6 +4,7 @@ from voluptuous import Schema, Required, Url, Coerce
 
 from models import Article, Sentence, db
 from validation import json_schema
+import stats
 
 article_api = Blueprint("article", __name__)
 
@@ -11,7 +12,7 @@ article_api = Blueprint("article", __name__)
 @db_session
 def article_list(lang_original, lang_target):
     articles = db.select("""SELECT a.id, s.original, a.source, date(a.created_at) FROM Article AS a
-                    JOIN Sentence AS s ON s.article = a.id AND s.`index` = 0
+                    JOIN Sentence AS s ON s.article = a.id AND s.index = 0
                     WHERE a.lang_original = $lang_original AND a.lang_target = $lang_target
                     ORDER BY a.id DESC
                     """)
@@ -52,4 +53,7 @@ def translate_sentence(data, aid):
     a = Article.get(id=aid)
     this_sent = Sentence.get(article=a, index=data["sentenceID"])
     this_sent.translation = data["translation"]
+    # stats
+    # TODO: use celery
+    stats.sentence_translate(this_sent.id)
     return {"success": True}

@@ -1,6 +1,6 @@
 import pytest
 
-from importing import *
+from upload import *
 
 @pytest.mark.parametrize("text,expected", [
     ("A. B. C.", [SplitSentence(text=s, para_index=0) for s in ("A.", "B.", "C.")]),
