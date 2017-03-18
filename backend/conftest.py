@@ -24,7 +24,6 @@ def database(request):
     # Ensure our database gets deleted.
     @request.addfinalizer
     def drop_database():
-        pass
         db.drop_all_tables(with_all_data=True)
         drop_postgresql_database(pg_user, pg_host, pg_port, pg_db, pg_version)
 

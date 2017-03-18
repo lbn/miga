@@ -22,11 +22,20 @@ stats_api = Blueprint("stats", __name__)
 }))
 def summary(data):
     where = ""
-    if data["period"] == "alltime":
-        where = "where date >= date_trunc({}, now())".format(data["period"])
+    if data["period"] != "alltime":
+        where = "where date >= date_trunc('{}', now())".format(data["period"])
     stats = db.select("""select sum(word_count), count(sentence)
         from EventTranslateSentence """ + where)
-    return {"words": stats[0][0] or 0, "sentences": stats[0][1]}
+    return {"words": stats[0][0] or 0, "sentences": stats[0][1], "streak": streak()}
+
+
+@db_session
+def streak():
+    cur = db.execute("""WITH dates(date) AS (SELECT DISTINCT date::date AS date FROM EventTranslateSentence),
+     dists AS (SELECT dates.date, (dates.date - now()::date + row_number() OVER (ORDER BY dates.date DESC)) AS dist FROM dates)
+SELECT 1+max(dists.date)-min(dists.date) FROM dists WHERE dists.dist = 1""")
+    res = cur.fetchone()
+    return res[0] or 0
 
 # tracking
 def sentence_translate(sentenceID, now=None):
