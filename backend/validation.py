@@ -2,6 +2,7 @@ import functools
 
 from flask import request
 from voluptuous.error import Error as VoluptuousError
+from voluptuous import Schema, Coerce
 
 
 
@@ -33,3 +34,9 @@ def json_schema(schema):
                 raise InvalidUsage(message=str(e))
         return wrapper
     return decorator
+
+
+lang_schema = Schema({
+    "original": Coerce(int),
+    "target": Coerce(int)
+})

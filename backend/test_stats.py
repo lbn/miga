@@ -30,3 +30,4 @@ def test_summary(request):
     assert res["words"] == 6*(days+2)
     assert res["sentences"] == 1*(days+2)
     assert res["streak"] == 2
+    assert res["practised"] == True

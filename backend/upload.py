@@ -9,7 +9,7 @@ from pony.orm import db_session, commit
 import newspaper
 
 from models import Article, Sentence
-from validation import json_schema
+from validation import json_schema, lang_schema
 
 
 upload_api = Blueprint("upload", __name__)
@@ -17,10 +17,6 @@ upload_api = Blueprint("upload", __name__)
 SplitSentence = namedtuple("SplitSentence", "text para_index")
 
 
-lang_schema = Schema({
-    "original": Coerce(int),
-    "target": Coerce(int)
-})
 
 @upload_api.route("/text", methods=["POST"])
 @json_schema(Schema({

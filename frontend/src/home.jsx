@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Grid, Col, Row } from 'react-bootstrap';
 import ArticleService from './service_article.js';
 
 import { loadArticleList } from "./actions";
+import SummarySidebar from "./containers/SummarySidebar";
 
 
 class Home extends React.Component {
@@ -29,12 +30,18 @@ class Home extends React.Component {
 				{article.source} - uploaded by Anon on {article.createdAt}
 				</ListGroupItem>;
 		});
-		return <div>
-			<h1>Home</h1>
-			<ListGroup>
-				{ articles }
-			</ListGroup>
-			</div>
+		return <Grid>
+				<Row>
+					<Col md={8}>
+						<ListGroup>
+							{ articles }
+						</ListGroup>
+					</Col>
+					<Col md={4}>
+						<SummarySidebar />
+					</Col>
+				</Row>
+			</Grid>
 	}
 }
 

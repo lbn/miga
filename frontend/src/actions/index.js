@@ -60,6 +60,19 @@ export const uploadText = (title, text) => (dispatch, getState) => dispatch({
 	}
 });
 
+export const STATS_SUMMARY = createRequestTypes("STATS_SUMMARY");
+
+export const statsSummary = (period) => (dispatch, getState) => dispatch({
+	[CALL_API]: {
+		types: STATS_SUMMARY,
+		endpoint: `stats/summary`,
+		data: {
+			method: "POST",
+			body: {period, lang: getState().lang}
+		}
+	}
+});
+
 export const changeLanguages = (lang) => (dispatch, getState) => dispatch({
 	type: "CHANGE_LANGUAGES",
 	lang: lang
