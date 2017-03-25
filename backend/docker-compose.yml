@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgresql:
+    image: 'postgres:9.6-alpine'
+    environment:
+      - POSTGRES_USER=miga
+      - POSTGRES_DB=miga
+    ports:
+      - 5440:5432
+    volumes:
+      - 'postgres_data:/var/lib/postgresql/data'
+
+volumes:
+  postgres_data: {}
