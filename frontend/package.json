@@ -1,5 +1,5 @@
 {
-  "name": "immersion",
+  "name": "miga",
   "version": "0.0.1",
   "main": "''",
   "scripts": {
@@ -10,11 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lbn/immersion"
+    "url": "https://github.com/lbn/miga"
   },
   "author": "Lee Archer",
   "license": "MIT",
-  "homepage": "https://github.com/lbn/immersion",
+  "homepage": "https://github.com/lbn/miga",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "immutability-helper": "^2.1.0",

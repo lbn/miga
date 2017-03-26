@@ -10,7 +10,7 @@ from stats import stats_api
 from validation import InvalidUsage
 from config import config
 
-app = FlaskAPI("immersion")
+app = FlaskAPI("miga")
 
 app.register_blueprint(article_api, url_prefix="/article")
 app.register_blueprint(translate_api, url_prefix="/translate")
@@ -29,7 +29,7 @@ def language_list():
 
 @app.route("/")
 def index():
-    return "immersion"
+    return "miga"
 
 @db_session
 def populate_languages():

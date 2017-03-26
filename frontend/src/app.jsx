@@ -17,7 +17,7 @@ export default class App extends React.Component {
 				<Navbar>
 					<Navbar.Header>
 						<Navbar.Brand>
-							<a href="/">Immersion</a>
+							<a href="/">miga</a>
 						</Navbar.Brand>
 					</Navbar.Header>
 					<Nav>
