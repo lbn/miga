@@ -1,19 +1,19 @@
-import React from 'react';
-import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
-import { IndexRoute, Router, Route, browserHistory} from 'react-router'
-import ArticleOriginal from './article_original.jsx';
-import ArticleSplit from './article_split.jsx';
-import ArticleFormatSwitcher from './article_nav.jsx';
-import HomeNav from './home_nav.jsx';
-import App from './app.jsx';
-import Home from './home.jsx';
-import Upload from './upload.jsx';
-import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
-import log from 'loglevel';
-import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from 'react-bootstrap';
+import React from "react";
+import { render } from "react-dom";
+import { AppContainer } from "react-hot-loader";
+import { IndexRoute, Router, Route, browserHistory} from "react-router"
+import ArticleOriginal from "./article_original.jsx";
+import ArticleSplit from "./article_split.jsx";
+import ArticleFormatSwitcher from "./article_nav.jsx";
+import HomeNav from "./home_nav.jsx";
+import App from "./app.jsx";
+import Home from "./home.jsx";
+import Upload from "./upload.jsx";
+import log from "loglevel";
+import { Navbar, Nav, NavItem, Grid, Row, Col, ButtonGroup, Button} from "react-bootstrap";
 
-import 'react-select/dist/react-select.css';
+import "bootstrap-loader";
+import "react-select/dist/react-select.css";
 
 log.setLevel("debug");
 

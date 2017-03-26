@@ -1,9 +1,12 @@
 "use strict";
-var webpack = require('webpack');
-var path = require('path');
-var loaders = require('./webpack.loaders');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var DashboardPlugin = require('webpack-dashboard/plugin');
+const webpack = require("webpack");
+const path = require("path");
+const loaders = require("./webpack.loaders");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const DashboardPlugin = require("webpack-dashboard/plugin");
+
+const bootstrapEntryPoints = require("./webpack.bootstrap.config.js");
+
 
 const HOST = process.env.HOST || "127.0.0.1";
 const PORT = process.env.PORT || "8888";
@@ -12,20 +15,38 @@ const PORT = process.env.PORT || "8888";
 loaders.push({
 	test: /\.css$/,
 	exclude: /[\/\\]src[\/\\]/,
-	loaders: [
-		'style?sourceMap',
-		'css'
+	use: [
+		{
+			loader: "style-loader",
+			options: {
+				sourceMap: true
+			}
+		},
+		"css-loader"
 	]
 });
+
 // local scss modules
 loaders.push({
 	test: /\.scss$/,
 	exclude: /[\/\\](node_modules|bower_components|public\/)[\/\\]/,
-	loaders: [
-		'style?sourceMap',
-		'css?modules&importLoaders=1&camelCase=dashes&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-		'postcss',
-		'sass'
+	use: [
+		{
+			loader: "style-loader",
+			options: {
+				sourceMap: true
+			}
+		},
+		{
+			loader: "css-loader",
+			options: {
+				modules: true,
+				importLoaders: 1,
+				camelCase: "dashes"
+			}
+		},
+		"postcss-loader",
+		"sass-loader"
 	]
 });
 
@@ -33,10 +54,16 @@ loaders.push({
 loaders.push({
 	test: /\.css$/,
 	exclude: /[\/\\](node_modules|bower_components|public\/)[\/\\]/,
-	loaders: [
-		'style?sourceMap',
-		'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
+	use: [
+		"style-loader",
+		"css-loader",
+		"postcss-loader"
 	]
+});
+
+loaders.push({
+	test: /bootstrap-sass\/assets\/javascripts\//,
+	use: 'imports-loader?jQuery=jquery'
 });
 
 module.exports = {
@@ -51,10 +78,10 @@ module.exports = {
 		filename: 'bundle.js'
 	},
 	resolve: {
-		extensions: ['', '.js', '.jsx']
+		extensions: ['.js', '.jsx']
 	},
 	module: {
-		loaders
+		rules: loaders
 	},
 	devServer: {
 		contentBase: "./public",
@@ -76,7 +103,7 @@ module.exports = {
 		}
 	},
 	plugins: [
-		new webpack.NoErrorsPlugin(),
+		new webpack.NoEmitOnErrorsPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new DashboardPlugin(),
 		new HtmlWebpackPlugin({
