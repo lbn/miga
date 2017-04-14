@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const DashboardPlugin = require("webpack-dashboard/plugin");
 
 const bootstrapEntryPoints = require("./webpack.bootstrap.config.js");
+const DotenvPlugin = require("webpack-dotenv-plugin");
 
 
 const HOST = process.env.HOST || "127.0.0.1";
@@ -106,6 +107,10 @@ module.exports = {
 		new webpack.NoEmitOnErrorsPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new DashboardPlugin(),
+		new DotenvPlugin({
+			sample: "./.env.default",
+			path: "./.env"
+		}),
 		new HtmlWebpackPlugin({
 			template: './src/template.html'
 		}),

@@ -4,7 +4,6 @@ const callApi = (endpoint, data = {}) => {
 	if (!data.headers) {
 			data.headers = {"Content-Type": "application/json"};
 	}
-	console.log(data);
 	if (data.body && typeof data.body != "string") {
 		data.body = JSON.stringify(data.body);
 	}

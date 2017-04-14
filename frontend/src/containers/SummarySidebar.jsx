@@ -35,7 +35,7 @@ class SummarySidebar extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		stats: state.entities.stats
+		stats: state.stats
 	};
 };
 

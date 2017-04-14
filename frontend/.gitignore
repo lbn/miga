@@ -28,3 +28,6 @@ node_modules
 
 # Ignore build files
 public
+
+# dotenv config
+.env

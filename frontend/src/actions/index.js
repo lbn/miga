@@ -1,16 +1,5 @@
-import { CALL_API } from "../middleware/api"
-
-
-const REQUEST = "REQUEST"
-const SUCCESS = "SUCCESS"
-const FAILURE = "FAILURE"
-
-function createRequestTypes(base) {
-  return [REQUEST, SUCCESS, FAILURE].reduce((acc, type) => {
-		acc[type] = `${base}_${type}`
-		return acc
-	}, {})
-}
+import { CALL_API } from "../middleware/api";
+import { REQUEST, SUCCESS, FAILURE, createRequestTypes } from "./util";
 
 export const ARTICLE_LIST = createRequestTypes("ARTICLE_LIST");
 
